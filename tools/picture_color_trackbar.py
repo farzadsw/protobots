@@ -1,18 +1,11 @@
 import cv2
 import numpy as np
-import subprocess
-
-subprocess.check_call("v4l2-ctl -d /dev/video0 -c auto_exposure=1",shell=True)
-
-subprocess.check_call("v4l2-ctl -d /dev/video0 -c exposure_time_absolute=355",shell=True)
 
 def nothing(x):
     pass
 
-cap = cv2.VideoCapture(0)
-
 # Create a black image, a window
-img = np.zeros((240,320,3), np.uint8)
+img = np.zeros((480,640,3), np.uint8)
 cv2.namedWindow('image')
 
 # create trackbars for color change
@@ -27,9 +20,12 @@ cv2.createTrackbar('Vmax','image',255,255,nothing)
 switch = '0 : OFF \n1 : ON'
 cv2.createTrackbar(switch, 'image',0,1,nothing)
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH,320)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
-cap.set(cv2.CAP_PROP_FPS,60)
+inframe = cv2.imread("/home/pi/l0.jpg")
+W = 400
+height, width, depth = inframe.shape
+imgScale = W/width
+newX,newY = inframe.shape[1]*imgScale, inframe.shape[0]*imgScale
+frame = cv2.resize(inframe,(int(newX),int(newY)))
 
 while(1):
 
@@ -42,9 +38,6 @@ while(1):
     vmax = cv2.getTrackbarPos('Vmax','image')
     s = cv2.getTrackbarPos(switch,'image')
     
-    # Take each frame
-    _, frame = cap.read()
-
     # Convert BGR to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -74,5 +67,4 @@ while(1):
     if k == 27:
         break
 
-cap.release()
 cv2.destroyAllWindows()
