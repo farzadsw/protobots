@@ -32,10 +32,10 @@ float lastDist =0;
 float xPos =0;
 float yPos =0;
 
-#define TIMEOUT       10  // time out for the command
+#define TIMEOUT       5  // time out for the command
 #define DEG_TO_RAD    0.0174533
 #define WHEEL_R    4.8 //cm radius
-#define WHEEL_BASE    20.0 //distance between wheels
+#define WHEEL_BASE    19.8 //distance between wheels
 
 // define two tasks for Blink & AnalogRead
 void TaskComm( void *pvParameters );
@@ -200,7 +200,7 @@ long readEncoder(){                        // Function to read and display the v
   
  // Serial.print(" xPos:");
   Serial.print(xPos);
- // Serial.print(",");
+  Serial.print(",");
   Serial.print(yPos);
  // Serial.print(" D: ");
  // Serial.print(dist);
