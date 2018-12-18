@@ -1,16 +1,20 @@
 import pygame
 import serial
 import time
-
+WIDTH =160
+HEIGHT = 120
 ser = serial.Serial("/dev/ttyArdM",115200,timeout = 1)
 
 pygame.init()
-screen = pygame.display.set_mode((160, 120))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 loop = True
 
 print("HI")
 time.sleep(0.2)
+px =0.0
+py =0.0
+th =0.0
 
 while loop:
     varLeft = 0
@@ -53,12 +57,21 @@ while loop:
             varRight =0
             varLeft=0
             ser.write("reset\n\r")
+            screen.fill((0,0,0))
             time.sleep(0.2)
             
     if keys[pygame.K_ESCAPE]:
         loop = False
     
-    print(ser.readline())
+    odom = ser.readline()
+    if  odom.count(',') ==2:
+        a,b,c = odom.split(",")
+        px = float(a)
+        py = float(b)
+        th = float(c)
+    print(px,py,th)
+    
+    print (odom)
 
     ser.flushInput()
     ser.flushOutput()
@@ -66,6 +79,6 @@ while loop:
     time.sleep(0.1)
     ser.write("move {0} {1}\n\r".format((varUp-varDown)*mod,(varLeft-varRight)*mod).encode())
     #print("V {0} {1}\n\r".format(varUp-varDown,varLeft-varRight))
-
-
+    pygame.draw.circle(screen,(255,0,0),(int(WIDTH/2 - py*0.5),int(HEIGHT/2 -px*0.5)),3,0)
+    pygame.display.update()
     pygame.event.pump()  # process event queue
