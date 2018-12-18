@@ -17,9 +17,14 @@ while loop:
     varRight = 0
     varUp = 0
     varDown = 0
+    mod =1
     clock.tick(3)
     keys = pygame.key.get_pressed()
     time.sleep(0.1)
+    
+    if pygame.key.get_mods() & pygame.KMOD_SHIFT:
+            print("shift")
+            mod = 2
     
     if keys[pygame.K_a]:
 
@@ -47,6 +52,8 @@ while loop:
             varUp =0
             varRight =0
             varLeft=0
+            ser.write("reset\n\r")
+            time.sleep(0.2)
             
     if keys[pygame.K_ESCAPE]:
         loop = False
@@ -57,7 +64,7 @@ while loop:
     ser.flushOutput()
 
     time.sleep(0.1)
-    ser.write("move {0} {1}\n\r".format(varUp-varDown,varLeft-varRight).encode())
+    ser.write("move {0} {1}\n\r".format((varUp-varDown)*mod,(varLeft-varRight)*mod).encode())
     #print("V {0} {1}\n\r".format(varUp-varDown,varLeft-varRight))
 
 
