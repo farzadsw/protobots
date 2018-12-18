@@ -2,7 +2,7 @@ import pygame
 import serial
 import time
 
-rf = serial.Serial("/dev/ttyArdM",115200,timeout = 1)
+ser = serial.Serial("/dev/ttyArdM",115200,timeout = 1)
 
 pygame.init()
 screen = pygame.display.set_mode((160, 120))
@@ -25,39 +25,39 @@ while loop:
 
             print("Left !")
             varLeft = 7
-            # rf.write("V 0 8\n\r")
+            
     if keys[pygame.K_d]:
 
             print("Right !")
             varRight = 7
-            # rf.write("V 0 -8\n\r")
+            
     if keys[pygame.K_w]:
 
             print("Up !")
             varUp = 15
-            # rf.write("V 5 0\n\r")
+            
     if keys[pygame.K_s]:
 
             print("Down !")
             varDown = 15
-            # rf.write("V -5 0\n\r")
+            
     if keys[pygame.K_SPACE]:
             print("Stop !")
             varDown =0
             varUp =0
             varRight =0
             varLeft=0
-            # rf.write("V 0 0\n\r")
+            
     if keys[pygame.K_ESCAPE]:
         loop = False
     
-    #print(rf.readline())
+    print(ser.readline())
 
-    rf.flushInput()
-    rf.flushOutput()
+    ser.flushInput()
+    ser.flushOutput()
 
     time.sleep(0.1)
-    rf.write("move {0} {1}\n\r".format(varUp-varDown,varLeft-varRight).encode())
+    ser.write("move {0} {1}\n\r".format(varUp-varDown,varLeft-varRight).encode())
     #print("V {0} {1}\n\r".format(varUp-varDown,varLeft-varRight))
 
 
