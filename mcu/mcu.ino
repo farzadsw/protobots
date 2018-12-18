@@ -28,9 +28,13 @@ byte softwareRev = 0;
 int velo = 0;
 int steer = 0;
 int counter = 0;
+float lastDist =0;
+float xPos =0;
+float yPos =0;
+
 #define TIMEOUT       10  // time out for the command
 #define DEG_TO_RAD    0.0174533
-#define WHEEL_R    5.0 //cm radius
+#define WHEEL_R    4.8 //cm radius
 #define WHEEL_BASE    20.0 //distance between wheels
 
 // define two tasks for Blink & AnalogRead
@@ -120,7 +124,10 @@ void TaskComm(void *pvParameters)  // This is a task.
         Serial.print("velocity: "); Serial.print(velo); Serial.print(" ,steer: ");Serial.println(steer);
       } else if (inbound.fullMatch("reset") ){  //reset encoders
          md25.write(CMD);                                            // Reset the encoder registers to 0
-         md25.write(RESETREG);         
+         md25.write(RESETREG); 
+         lastDist =0;   
+         xPos = 0;
+         yPos = 0;     
       }
       else {
         outbound.streamEmpty(&Serial, "what?");
@@ -144,12 +151,12 @@ void TaskDrive(void *pvParameters)  // This is a task.
     readEncoder();
     if(counter > 0)
     {
-      moveit(velo,steer);
+      moveit(velo,-steer); // rotatoin ccw is +
     }else
     {
       moveit(0,0);
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS); //100ms
+    vTaskDelay(50 / portTICK_PERIOD_MS); //100ms
   }
 }
 
@@ -159,9 +166,11 @@ void TaskDrive(void *pvParameters)  // This is a task.
 //#####################################
 
 long readEncoder(){                        // Function to read and display the value of both encoders, returns value of first encoder
-  long result1 = 0; 
+  long result1 = 0;     //encoder reading. In degree 
   long result2 = 0;
+  
   float dist = 0;
+  float deltaDist = 0;
   float theta = 0;
   md25.write(CMD);
   md25.write(READENCS);
@@ -182,17 +191,23 @@ long readEncoder(){                        // Function to read and display the v
   result2 += md25.read();
 
   dist = (result1 + result2)* DEG_TO_RAD * WHEEL_R / 2.0;
-  theta = (result1 - result2) * WHEEL_R / WHEEL_BASE;  // degree
-
-//  Serial.print("Encoder 1:");               // Displays data to the LCD03 screen
-//  Serial.print(result1,DEC);
-//  Serial.print("Encoder 2:");
-//  Serial.print(result2,DEC);
-//  Serial.print("D: ");
-  Serial.print(dist);
+  theta = (result2 - result1) * WHEEL_R / WHEEL_BASE;  // degree and ccw is +
+  theta -= (float)((int)(theta/360))*360; // limiting deg to +-360  !!!!!!!
+  
+  deltaDist = dist - lastDist;
+  xPos += deltaDist * cos(theta* DEG_TO_RAD); 
+  yPos += deltaDist * sin(theta* DEG_TO_RAD);
+  
+ // Serial.print(" xPos:");
+  Serial.print(xPos);
+ // Serial.print(",");
+  Serial.print(yPos);
+ // Serial.print(" D: ");
+ // Serial.print(dist);
   Serial.print(",");
   Serial.print(theta);
   Serial.print("\n\r");
+  lastDist = dist;
   return result1;                                   
 }
   
