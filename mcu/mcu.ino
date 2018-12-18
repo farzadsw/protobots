@@ -149,7 +149,7 @@ void TaskDrive(void *pvParameters)  // This is a task.
     {
       moveit(0,0);
     }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS); //100ms
   }
 }
 
@@ -184,13 +184,13 @@ long readEncoder(){                        // Function to read and display the v
   dist = (result1 + result2)* DEG_TO_RAD * WHEEL_R / 2.0;
   theta = (result1 - result2) * WHEEL_R / WHEEL_BASE;  // degree
 
-  Serial.print("Encoder 1:");               // Displays data to the LCD03 screen
-  Serial.print(result1,DEC);
-  Serial.print("Encoder 2:");
-  Serial.print(result2,DEC);
-  Serial.print(" Distance:");
+//  Serial.print("Encoder 1:");               // Displays data to the LCD03 screen
+//  Serial.print(result1,DEC);
+//  Serial.print("Encoder 2:");
+//  Serial.print(result2,DEC);
+//  Serial.print("D: ");
   Serial.print(dist);
-  Serial.print(" Theta:");
+  Serial.print(",");
   Serial.print(theta);
   Serial.print("\n\r");
   return result1;                                   
@@ -223,11 +223,10 @@ void readVolts(){                                                 // Function re
 
 void moveit (byte v, byte s)
 {
-      md25.write(CMD);                  // Set motors to drive forward at full speed
+      md25.write(CMD);                  // Set motors to drive 
       md25.write(WRITESP1);
       md25.write(v);
-      md25.write(CMD);                  // Set motors to drive forward at full speed
+      md25.write(CMD);                  
       md25.write(WRITESP2);
       md25.write(s);
 }
-
