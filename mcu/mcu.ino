@@ -121,7 +121,7 @@ void TaskComm(void *pvParameters)  // This is a task.
         velo = inbound.nextInt();
         steer = inbound.nextInt();
         counter = TIMEOUT;
-        Serial.print("velocity: "); Serial.print(velo); Serial.print(" ,steer: ");Serial.println(steer);
+        //Serial.print("velocity: "); Serial.print(velo); Serial.print(" ,steer: ");Serial.println(steer);
       } else if (inbound.fullMatch("reset") ){  //reset encoders
          md25.write(CMD);                                            // Reset the encoder registers to 0
          md25.write(RESETREG); 
@@ -156,7 +156,7 @@ void TaskDrive(void *pvParameters)  // This is a task.
     {
       moveit(0,0);
     }
-    vTaskDelay(50 / portTICK_PERIOD_MS); //100ms
+    vTaskDelay(50 / portTICK_PERIOD_MS); //50ms
   }
 }
 
