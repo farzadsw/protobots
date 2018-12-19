@@ -35,12 +35,12 @@ def talker():
         if keys[pygame.K_a]:
 
                 print("Left !")
-                varLeft = 0.1
+                varLeft = 0.7
                 
         if keys[pygame.K_d]:
 
                 print("Right !")
-                varRight = 0.1
+                varRight = 0.7
                 
         if keys[pygame.K_w]:
 

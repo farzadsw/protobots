@@ -12,8 +12,8 @@ from nav_msgs.msg import Odometry
 
 ser = serial.Serial("/dev/ttyArdM",115200,timeout = 0.2)
 time.sleep(1)  #Starting arsuino
-FACTORX = 100  #scaling motor driver commands to m/s
-FACTORTH = 100
+FACTORX = 100 * 1.15  #scaling motor driver commands to m/s
+FACTORTH = 100 * 0.13
 
 def callback(data):
     vel_msg = Twist()
@@ -39,6 +39,7 @@ def talker():
     rospy.init_node('cmdvel_serial', anonymous=True)    
     pub = rospy.Publisher('odom', Odometry, queue_size=20)
     odom_broadcaster = tf.TransformBroadcaster()
+    laser_frame_broadcaster = tf.TransformBroadcaster()
     rospy.Subscriber("cmd_vel", Twist, callback)
     rate = rospy.Rate(10) # 10hz
 
@@ -89,6 +90,13 @@ def talker():
             current_time,
             "base_link",
             "odom")
+
+   #     laser_frame_broadcaster.sendTransform(
+    #        (px, py, 0.),
+    #        odom_quat,
+    #        current_time,
+   #         "laser",
+   #         "base_link")
         # next, we'll publish the odometry message over ROS
         odom = Odometry()
         odom.header.stamp = current_time
